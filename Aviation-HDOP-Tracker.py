@@ -105,11 +105,11 @@ class HdopTracker():
         message = []
         for line in rawData:
             entry = line.replace("\n", "").split(",")
-            if entry[0][:2] == "GP":  # Check for NEMA message identifier. e.g. "GPRMC"
+            if entry[0][:2] == "GP" or entry[0][:3] == "$GP":  # Check for NEMA message identifier. e.g. "GPRMC"
                 message.append(entry)
 
             # If lthe last entry in the message sequence is reached. Save our data and create a new message.
-            if entry[0] == "GPGST":
+            if entry[0] == "GPGGA" or entry[0] == "$GPGGA":
                 data.append(message)
                 message = []
 
@@ -133,9 +133,10 @@ class HdopTracker():
         filteredData = []
         for message in data:
             for entry in message:
-                if entry[SENTENCE_ID] == "GPGGA":
-                    if int(entry[GPS_QUALITY]) > 0:
-                        filteredData.append(entry)
+                if entry[SENTENCE_ID] == "GPGGA" or entry[SENTENCE_ID] == "$GPGGA":
+                    if entry[GPS_QUALITY] != "":
+                        if int(entry[GPS_QUALITY]) > 0:
+                            filteredData.append(entry)
 
         return filteredData
         #--------------------------------------------------------------------------------------------------------------------------------------------#
