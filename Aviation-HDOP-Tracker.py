@@ -47,6 +47,7 @@ class HdopTracker():
         self.waterColour = "#181f69"
         self.gridLineSeperation = 5
         self.gpsData = self.readGPSData(openFile())
+        self.gpsData = self.filterData(self.gpsData)
 
         # Render the output map and plot to the user.
         self.displayMapPlot()
@@ -122,6 +123,30 @@ class HdopTracker():
                 message = []
 
         return data
+        #--------------------------------------------------------------------------------------------------------------------------------------------#
+
+    def filterData(self, data):
+        '''Method for filtering GPS Log data so that only valid messages are present with the data points that we require.'''
+
+        # Filter fopr the data points that we require. i.e.
+        # $GPGGA (Global Positioning System Fix Data) :
+        #   Index 0       = Interpreted sentences
+        #   Indexes 2 & 3 = Latitude
+        #   Indexes 4 & 5 = Longitude,
+        #   Index 6       = GPS quality indicator (0=invalid; 1=GPS fix; 2=Diff. GPS fix)
+        #   Index 8       = HDOP (Horizontal dilution of position)
+
+        SENTENCE_ID = 0
+        GPS_QUALITY = 6
+
+        filteredData = []
+        for message in data:
+            for entry in message:
+                if entry[SENTENCE_ID] == "GPGGA":
+                    if int(entry[GPS_QUALITY]) > 0:
+                        filteredData.append(entry)
+
+        return filteredData
         #--------------------------------------------------------------------------------------------------------------------------------------------#
     #------------------------------------------------------------------------------------------------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------------------------------------------------#
