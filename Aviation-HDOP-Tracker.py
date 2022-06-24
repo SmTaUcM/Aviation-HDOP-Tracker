@@ -164,6 +164,23 @@ def openFile():
     root.withdraw()
     return filedialog.askopenfilename(title="Please select a GPS Log file...", initialdir=os.getcwd(), filetypes=[("Text files", "*.txt")])
     #------------------------------------------------------------------------------------------------------------------------------------------------#
+
+
+def convertToDegrees(gpsLogCoords, nsew):
+    '''Function that takes a NEMA GPS Log formatted lattitude or longitude and converts it to decimal degrees.
+
+    e.g. convertToDegrees("5126.5", "N") --> float(51.44166666666667)'''
+
+    if dir in ["N", "S"]:  # Calculating Latitude
+        degs, mins = num[:2], num[2:]
+    elif dir in ["E", "W"]:  # Calculating Longitude
+        degs, mins = num[:3], num[3:]
+
+    decimalDegs = float(degs) + (float(mins) / 60)
+    if dir in ["S", "W"]:
+        decimalDegs = 0 - decimalDegs
+    return decimalDegs
+    #------------------------------------------------------------------------------------------------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------------------------------------------------#
 
 
