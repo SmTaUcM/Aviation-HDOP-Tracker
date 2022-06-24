@@ -55,7 +55,7 @@ class HdopTracker():
             self.gpsData = self.appendDecimalCoords(self.gpsData)
 
             # Render the output map and plot to the user.
-            self.middleLat, self.middleLong = findCenter(self.gpsData)
+            self.middleLat, self.middleLong, self.lLong, self.hLong, self.lLat, self.hLat = findCenter(self.gpsData)
             self.displayMapPlot()
         #--------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -65,6 +65,7 @@ class HdopTracker():
         # Apply default map settings.
         plt.rcParams["figure.figsize"] = self.windowSize
         plt.get_current_fig_manager().canvas.set_window_title(self.mainWindowTitle)
+        plt.get_current_fig_manager().canvas.toolbar.zoom()
         plt.title("Aircraft GPS Track (HDOP >= 2.0 shown in red)")  # Map title.
 
         # Define a Lambert Conformal Conic map.
@@ -85,6 +86,14 @@ class HdopTracker():
 
         # Draw the aircraft's track and DHOP data.
         self.plotAircraftTrack(self.gpsData)
+
+        # Zoom in on the aircraft track area.
+        # self.mapPlot(Long, Lat) Converts decimal Lat/Long degrees in to Meters, needed by Basemap for drawing.
+        bottomLeft = self.mapPlot(self.lLong, self.lLat)
+        topRight = self.mapPlot(self.hLong, self.hLat)
+        xPadding = (topRight[0] - bottomLeft[0]) * 0.25
+        yPadding = (topRight[1] - bottomLeft[1]) * 0.25
+        plt.axis([bottomLeft[0] - xPadding, topRight[0] + xPadding, bottomLeft[1] - yPadding, topRight[1] + xPadding])
 
         # Show the output.
         plt.show()
@@ -251,7 +260,7 @@ def findCenter(data):
     middleLat = ((highestLat - lowestLat) / 2) + lowestLat
     middleLong = ((highestLong - lowestLong) / 2) + lowestLong
 
-    return middleLat, middleLong
+    return middleLat, middleLong, lowestLong, highestLong, lowestLat, highestLat
     #------------------------------------------------------------------------------------------------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------------------------------------------------#
 
