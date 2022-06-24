@@ -55,6 +55,7 @@ class HdopTracker():
             self.gpsData = self.appendDecimalCoords(self.gpsData)
 
             # Render the output map and plot to the user.
+            self.middleLat, self.middleLong = findCenter(self.gpsData)
             self.displayMapPlot()
         #--------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -201,6 +202,37 @@ def convertToDegrees(gpsLogCoords, nsew):
     if nsew in ["S", "W"]:
         decimalDegs = 0 - decimalDegs
     return decimalDegs
+    #------------------------------------------------------------------------------------------------------------------------------------------------#
+
+
+def findCenter(data):
+    '''Function that will identify the central Lat/Long of a given list of $GPGGA filtered and appened NEMA GPS Log Data.'''
+
+    # Declare local constants.
+    LAT = 15
+    LONG = 16
+
+    # Declare local variables.
+    lowestLat = 90.0
+    highestLat = -90.0
+    lowestLong = 180.0
+    highestLong = -180.0
+
+    # Find the highest and lowest lat/longs.
+    for message in data:
+        if message[LONG] < lowestLong:
+            lowestLong = message[LONG]
+        if message[LONG] > highestLong:
+            highestLong = message[LONG]
+        if message[LAT] < lowestLat:
+            lowestLat = message[LAT]
+        if message[LAT] > highestLat:
+            highestLat = message[LAT]
+
+    middleLat = ((highestLat - lowestLat) / 2) + lowestLat
+    middleLong = ((highestLong - lowestLong) / 2) + lowestLong
+
+    return middleLat, middleLong
     #------------------------------------------------------------------------------------------------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------------------------------------------------#
 
