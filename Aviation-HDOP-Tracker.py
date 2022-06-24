@@ -46,11 +46,15 @@ class HdopTracker():
         self.landColour = "#2e632f"
         self.waterColour = "#181f69"
         self.gridLineSeperation = 5
-        self.gpsData = self.readGPSData(openFile())
-        self.gpsData = self.filterData(self.gpsData)
 
-        # Render the output map and plot to the user.
-        self.displayMapPlot()
+        # Main program logic.
+        filePath = openFile()
+        if filePath != "":
+            self.gpsData = self.readGPSData(filePath)
+            self.gpsData = self.filterData(self.gpsData)
+
+            # Render the output map and plot to the user.
+            self.displayMapPlot()
         #--------------------------------------------------------------------------------------------------------------------------------------------#
 
     def displayMapPlot(self):
