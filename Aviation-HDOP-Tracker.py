@@ -46,7 +46,7 @@ class HdopTracker():
         self.landColour = "#2e632f"
         self.waterColour = "#181f69"
         self.gridLineSeperation = 5
-        self.gpsFile = openFile()
+        self.gpsData = self.readGPSData(openFile())
 
         # Render the output map and plot to the user.
         self.displayMapPlot()
@@ -97,7 +97,34 @@ class HdopTracker():
         # Show the output.
         plt.show()
         #--------------------------------------------------------------------------------------------------------------------------------------------#
+
+    def readGPSData(self, filePath):
+        '''Method to read in the GPS Log data and store it as a list of dictionaries.
+
+        readGPSData() --> [{"GPRMC" : [,,"V",,,,,,,,,,"N*53"], "GPVTG" : [,,,,,,,,,"N*30"]}]'''
+
+        # Read in the raw GPS Log data.
+        rawData = []
+        with open(filePath, "r") as dataFile:
+            rawData = dataFile.readlines()
+
+        # Store the date into a series of nested lists. Easch nest represents a message sequence.
+        data = []
+        message = []
+        for line in rawData:
+            entry = line.replace("\n", "").split(",")
+            if entry[0][:2] == "GP":  # Check for NEMA message identifier. e.g. "GPRMC"
+                message.append(entry)
+
+            # If lthe last entry in the message sequence is reached. Save our data and create a new message.
+            if entry[0] == "GPGST":
+                data.append(message)
+                message = []
+
+        return data
+        #--------------------------------------------------------------------------------------------------------------------------------------------#
     #------------------------------------------------------------------------------------------------------------------------------------------------#
+#----------------------------------------------------------------------------------------------------------------------------------------------------#
 
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------#
@@ -112,9 +139,11 @@ def openFile():
     root.withdraw()
     return filedialog.askopenfilename(title="Please select a GPS Log file...", initialdir=os.getcwd(), filetypes=[("Text files", "*.txt")])
     #------------------------------------------------------------------------------------------------------------------------------------------------#
+#----------------------------------------------------------------------------------------------------------------------------------------------------#
 
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------#
 #                                                                     Main Program.                                                                  #
 #----------------------------------------------------------------------------------------------------------------------------------------------------#
 hdopTracker = HdopTracker()
+#----------------------------------------------------------------------------------------------------------------------------------------------------#
