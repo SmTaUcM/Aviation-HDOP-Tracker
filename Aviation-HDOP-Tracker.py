@@ -68,38 +68,23 @@ class HdopTracker():
         plt.title("Aircraft GPS Track (HDOP >= 2.0 shown in red)")  # Map title.
 
         # Define a Lambert Conformal Conic map.
-        mapPlot = Basemap(width=3000000, height=2000000,
-                          rsphere=(6378137.00, 6356752.3154),
-                          projection='lcc', lat_1=1.0, lat_2=2,
-                          lat_0=self.middleLat, lon_0=self.middleLong,
-                          resolution='l', area_thresh=1000.0)
+        self.mapPlot = Basemap(width=3000000, height=2000000,
+                               rsphere=(6378137.00, 6356752.3154),
+                               projection='lcc', lat_1=1.0, lat_2=2,
+                               lat_0=self.middleLat, lon_0=self.middleLong,
+                               resolution='l', area_thresh=1000.0)
 
         # Draw coastlines, meridians and parallels onto the map.
-        mapPlot.drawcoastlines()
-        mapPlot.drawcountries()
-        mapPlot.drawrivers()
-        mapPlot.drawmapboundary(fill_color=self.waterColour)
-        mapPlot.fillcontinents(color=self.landColour, lake_color=self.waterColour)
-        mapPlot.drawparallels(np.arange(-90, 90, self.gridLineSeperation), labels=[False, True, True, False])
-        mapPlot.drawmeridians(np.arange(-180, 180, self.gridLineSeperation), labels=[False, False, False, True])
+        self.mapPlot.drawcoastlines()
+        self.mapPlot.drawcountries()
+        self.mapPlot.drawrivers()
+        self.mapPlot.drawmapboundary(fill_color=self.waterColour)
+        self.mapPlot.fillcontinents(color=self.landColour, lake_color=self.waterColour)
+        self.mapPlot.drawparallels(np.arange(-90, 90, self.gridLineSeperation), labels=[False, True, True, False])
+        self.mapPlot.drawmeridians(np.arange(-180, 180, self.gridLineSeperation), labels=[False, False, False, True])
 
-        # -------------- Test Code. ------------------------
-        # Draw the map's center point.
-        long, lat = mapPlot(self.middleLong, self.middleLat)
-        mapPlot.plot(long, lat, color="#00FF00", marker='o')
-
-        # Plot a track on the map.
-        plots = []
-        plots.append(mapPlot(-0.172765, 53.104912))  # Conz - Long / Lat
-        plots.append(mapPlot(-3.315890, 57.663363))  # Loss
-        plots.append(mapPlot(-1.973986, 51.500667))  # Lyn
-
-        for plot in range(len(plots) - 1):
-            if plot == range(len(plots) - 1):  # Prevent iterating beond our list.
-                break
-            else:
-                mapPlot.plot([plots[plot][0], plots[plot + 1][0]], [plots[plot][1], plots[plot + 1][1]], color="#FF0000")
-        # ----------- End of Test Code. --------------------
+        # Draw the aircraft's track and DHOP data.
+        self.plotAircraftTrack(self.gpsData)
 
         # Show the output.
         plt.show()
@@ -169,6 +154,39 @@ class HdopTracker():
             newData.append(newMessage)
 
         return newData
+        #--------------------------------------------------------------------------------------------------------------------------------------------#
+
+    def plotAircraftTrack(self, data):
+        '''Method used to plot the filtered and appeneded NEMA GPS Log data onto the map.'''
+
+        # Declare local constants.
+        LAT = 15
+        LONG = 16
+        HDOP = 8
+        HDOP_GOOD = "#00FF00"
+        HDOP_BAD = "#FF0000"
+
+        # Draw the map's center point.
+        long, lat = self.mapPlot(self.middleLong, self.middleLat)
+        self.mapPlot.plot(long, lat, color="#00FF00", marker='o')
+
+        # Create a list contining meters converted lat / long along with our HDOP figure..
+        plots = []
+        for message in self.gpsData:
+            # self.mapPlot(Long, Lat) Converts decimal Lat/Long degrees in to Meters, needed by Basemap for drawing.
+            plots.append([self.mapPlot(message[LONG], message[LAT]), message[HDOP]])
+
+        # Tertermine if DHOP is within teolerance and then plot the current fox to the next upon the map.
+        for plot in range(len(plots) - 1):
+            if plot == range(len(plots) - 1):  # Prevent iterating beond our list.
+                break
+            else:
+                if float(plots[plot][1]) > 2.0:
+                    lineCol = HDOP_BAD
+                else:
+                    lineCol = HDOP_GOOD
+
+                self.mapPlot.plot([plots[plot][0][0], plots[plot + 1][0][0]], [plots[plot][0][1], plots[plot + 1][0][1]], color=lineCol)
         #--------------------------------------------------------------------------------------------------------------------------------------------#
     #------------------------------------------------------------------------------------------------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------------------------------------------------#
