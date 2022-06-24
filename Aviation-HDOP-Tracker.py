@@ -17,6 +17,9 @@
 #----------------------------------------------------------------------------------------------------------------------------------------------------#
 #                                                                      Imports.                                                                      #
 #----------------------------------------------------------------------------------------------------------------------------------------------------#
+import os
+import tkinter as tk
+from tkinter import filedialog
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.basemap import Basemap
@@ -43,6 +46,7 @@ class HdopTracker():
         self.landColour = "#2e632f"
         self.waterColour = "#181f69"
         self.gridLineSeperation = 5
+        self.gpsFile = openFile()
 
         # Render the output map and plot to the user.
         self.displayMapPlot()
@@ -99,6 +103,15 @@ class HdopTracker():
 #----------------------------------------------------------------------------------------------------------------------------------------------------#
 #                                                                      Functions.                                                                    #
 #----------------------------------------------------------------------------------------------------------------------------------------------------#
+def openFile():
+    '''Function that asks the user to select a file to be read in by this program.
+
+    openFile() --> str(filePath)'''
+
+    root = tk.Tk()
+    root.withdraw()
+    return filedialog.askopenfilename(title="Please select a GPS Log file...", initialdir=os.getcwd(), filetypes=[("Text files", "*.txt")])
+    #------------------------------------------------------------------------------------------------------------------------------------------------#
 
 
 #----------------------------------------------------------------------------------------------------------------------------------------------------#
