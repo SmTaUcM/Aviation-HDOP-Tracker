@@ -52,6 +52,7 @@ class HdopTracker():
         if filePath != "":
             self.gpsData = self.readGPSData(filePath)
             self.gpsData = self.filterData(self.gpsData)
+            self.gpsData = self.appendDecimalCoords(self.gpsData)
 
             # Render the output map and plot to the user.
             self.displayMapPlot()
@@ -151,6 +152,22 @@ class HdopTracker():
                         filteredData.append(entry)
 
         return filteredData
+        #--------------------------------------------------------------------------------------------------------------------------------------------#
+
+    def appendDecimalCoords(self, data):
+        '''Method for adding decimal lat/long values to the end of each GPS Log $GPGGA filtered message.'''
+
+        LAT_VALUE = 2
+        LAT_DIR = 3
+        LONG_VALUE = 4
+        LONG_DIR = 5
+
+        newData = []
+        for message in data:
+            newMessage = message + [convertToDegrees(message[LAT_VALUE], message[LAT_DIR]), convertToDegrees(message[LONG_VALUE], message[LONG_DIR])]
+            newData.append(newMessage)
+
+        return newData
         #--------------------------------------------------------------------------------------------------------------------------------------------#
     #------------------------------------------------------------------------------------------------------------------------------------------------#
 #----------------------------------------------------------------------------------------------------------------------------------------------------#
