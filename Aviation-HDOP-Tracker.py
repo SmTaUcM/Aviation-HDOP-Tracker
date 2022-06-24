@@ -171,13 +171,13 @@ def convertToDegrees(gpsLogCoords, nsew):
 
     e.g. convertToDegrees("5126.5", "N") --> float(51.44166666666667)'''
 
-    if dir in ["N", "S"]:  # Calculating Latitude
-        degs, mins = num[:2], num[2:]
-    elif dir in ["E", "W"]:  # Calculating Longitude
-        degs, mins = num[:3], num[3:]
+    if nsew in ["N", "S"]:  # Calculating Latitude
+        degs, mins = gpsLogCoords[:2], gpsLogCoords[2:]
+    elif nsew in ["E", "W"]:  # Calculating Longitude
+        degs, mins = gpsLogCoords[:3], gpsLogCoords[3:]
 
     decimalDegs = float(degs) + (float(mins) / 60)
-    if dir in ["S", "W"]:
+    if nsew in ["S", "W"]:
         decimalDegs = 0 - decimalDegs
     return decimalDegs
     #------------------------------------------------------------------------------------------------------------------------------------------------#
