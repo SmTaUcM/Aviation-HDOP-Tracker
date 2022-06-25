@@ -6,5 +6,5 @@ Using the provided GPS log, provide a visual Latitude/Longitude plot of the airc
 The plot should indicate portions of the flight where the Horizontal Dilution of Precision (HDOP) was high. For example, by using a red colour to indicate a DOP greater than 2.0.
 
 - **What I Learned:** 
-This project has seen me refine my skills at using the MatPlotLib Python package and has improved my skill at rendering images and plots using the Python coding language.
-It has also serveed as a refresher in geospacial navigation calculations.
+This project has seen me refine my skills at using the Matplotlib  Python package and has improved my skill at rendering images and plots using the Python coding language.
+It has also served as a refresher in geospatial navigation calculations.
