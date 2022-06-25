@@ -129,3 +129,7 @@ dmypy.json
 .pyre/
 
 AutoPep8er.bat
+_Compiler/Aviation-HDOP-Tracker
+_Compiler/Aviation-HDOP-Tracker.zip
+_Compiler/Build
+_Compiler/Dist

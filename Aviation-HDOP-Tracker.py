@@ -45,7 +45,7 @@ class HdopTracker():
         self.mainWindowTitle = "Aviation HDOP Plotter"
         self.landColour = "#2e632f"
         self.waterColour = "#181f69"
-        self.gridLineSeperation = 5
+        self.gridLineSeperation = 1
 
         # Main program logic.
         filePath = openFile()
@@ -66,7 +66,7 @@ class HdopTracker():
         plt.rcParams["figure.figsize"] = self.windowSize
         plt.get_current_fig_manager().canvas.set_window_title(self.mainWindowTitle)
         plt.get_current_fig_manager().canvas.toolbar.zoom()
-        plt.title("Aircraft GPS Track (HDOP >= 2.0 shown in red)")  # Map title.
+        plt.title("Aircraft GPS Track (HDOP > 2.0 shown in red)")  # Map title.
 
         # Define a Lambert Conformal Conic map.
         self.mapPlot = Basemap(width=3000000, height=2000000,
@@ -87,13 +87,13 @@ class HdopTracker():
         # Draw the aircraft's track and DHOP data.
         self.plotAircraftTrack(self.gpsData)
 
-        # Zoom in on the aircraft track area.
-        # self.mapPlot(Long, Lat) Converts decimal Lat/Long degrees in to Meters, needed by Basemap for drawing.
-        bottomLeft = self.mapPlot(self.lLong, self.lLat)
-        topRight = self.mapPlot(self.hLong, self.hLat)
-        xPadding = (topRight[0] - bottomLeft[0]) * 0.25
-        yPadding = (topRight[1] - bottomLeft[1]) * 0.25
-        plt.axis([bottomLeft[0] - xPadding, topRight[0] + xPadding, bottomLeft[1] - yPadding, topRight[1] + xPadding])
+# Zoom in on the aircraft track area.
+# self.mapPlot(Long, Lat) Converts decimal Lat/Long degrees in to Meters, needed by Basemap for drawing.
+##        bottomLeft = self.mapPlot(self.lLong, self.lLat)
+##        topRight = self.mapPlot(self.hLong, self.hLat)
+##        xPadding = (topRight[0] - bottomLeft[0]) * 0.25
+##        yPadding = (topRight[1] - bottomLeft[1]) * 0.25
+##        plt.axis([bottomLeft[0] - xPadding, topRight[0] + xPadding, bottomLeft[1] - yPadding, topRight[1] + xPadding])
 
         # Show the output.
         plt.show()
@@ -178,7 +178,7 @@ class HdopTracker():
 
         # Draw the map's center point.
         long, lat = self.mapPlot(self.middleLong, self.middleLat)
-        self.mapPlot.plot(long, lat, color="#00FF00", marker='o')
+        self.mapPlot.plot(long, lat, color="#111111", marker='+')
 
         # Create a list contining meters converted lat / long along with our HDOP figure..
         plots = []
@@ -234,7 +234,8 @@ def convertToDegrees(gpsLogCoords, nsew):
 
 
 def findCenter(data):
-    '''Function that will identify the central Lat/Long of a given list of $GPGGA filtered and appened NEMA GPS Log Data.'''
+    '''Function that will identify and return the central and extreme Lat/Long CoOrds of a given list of $GPGGA
+       filtered and appended NEMA GPS Log Data.'''
 
     # Declare local constants.
     LAT = 15
