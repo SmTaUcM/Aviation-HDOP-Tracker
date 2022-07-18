@@ -117,7 +117,7 @@ class HdopTracker():
             if entry[0][:2] == "GP" or entry[0][:3] == "$GP":  # Check for NEMA message identifier. e.g. "GPRMC"
                 message.append(entry)
 
-            # If lthe last entry in the message sequence is reached. Save our data and create a new message.
+            # If the last entry in the message sequence is reached. Save our data and create a new message.
             if entry[0] == "GPGGA" or entry[0] == "$GPGGA":
                 data.append(message)
                 message = []
@@ -128,7 +128,7 @@ class HdopTracker():
     def filterData(self, data):
         '''Method for filtering GPS Log data so that only valid messages are present with the data points that we require.'''
 
-        # Filter fopr the data points that we require. i.e.
+        # Filter for the data points that we require. i.e.
         # $GPGGA (Global Positioning System Fix Data) :
         #   Index 0       = Interpreted sentences
         #   Indexes 2 & 3 = Latitude
@@ -186,9 +186,9 @@ class HdopTracker():
             # self.mapPlot(Long, Lat) Converts decimal Lat/Long degrees in to Meters, needed by Basemap for drawing.
             plots.append([self.mapPlot(message[LONG], message[LAT]), message[HDOP]])
 
-        # Tertermine if DHOP is within teolerance and then plot the current fox to the next upon the map.
+        # Dertermine if DHOP is within tolerance and then plot the current fix to the next upon the map.
         for plot in range(len(plots) - 1):
-            if plot == range(len(plots) - 1):  # Prevent iterating beond our list.
+            if plot == range(len(plots) - 1):  # Prevent iterating beyond our list.
                 break
             else:
                 if float(plots[plot][1]) > 2.0:
